@@ -6,7 +6,7 @@ a social network app built with django
 
 
 # Features:
-- User Authentication and authorization features: Signup, Login, Protected Pages and more.
+- User authentication and authorization: Signup, Login, Protected Pages and more.
 - Add, edit and delete posts with picture uploads. Only post owners are authorized to modify/delete.
 - Comment on posts
 - Like on posts
