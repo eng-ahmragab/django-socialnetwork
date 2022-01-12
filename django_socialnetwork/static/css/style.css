@@ -1,0 +1,54 @@
+body {
+    background: #F8F8F8 !important;
+}
+
+.navbar-custom {
+    background-color: #396afc !important; 
+}
+
+.comment-input{
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+.border-raduis{
+    border-radius: 20px;
+}
+
+
+.comment-box{
+    background-color: #F2F2F2 !important;
+    border-radius: 10px 18px;
+    border: none;
+    width: auto;
+    height: auto;
+}
+
+
+.mymodal {
+    height: 300px !important;
+    top: 200px !important;
+    font-size: 20px !important;
+}
+
+
+
+
+
+.w-big {
+    width: 200px !important;
+}
+
+.bwhite-lg {
+    background-color: transparent !important;
+}
+
+.bwhite-sm {
+    background-color: transparent !important;
+    width: 10px !important;
+}
+
+
+.list-group-item {
+    padding: 7px 12px !important;
+}

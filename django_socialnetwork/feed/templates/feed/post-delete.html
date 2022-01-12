@@ -1,0 +1,45 @@
+
+
+
+
+
+{% extends 'base.html '%}
+
+{% load crispy_forms_tags %}
+
+
+{% block title %} Delete Post | Bffbook {% endblock %}
+
+
+
+
+
+
+
+{% block content %}
+
+
+
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <h3 class="mb-3">Delete post?</h3>
+
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <p>Are you sure you want to delete the post?</p>
+                <button type='submit' class="btn btn-danger mt-3">
+                    Update
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock content %}

@@ -1,0 +1,170 @@
+{% extends 'base.html '%}
+
+{% load crispy_forms_tags %}
+
+
+{% block title %} Posts | Bffbook {% endblock %}
+
+
+
+
+
+{% block content %}
+
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-md-8">
+            {% for post in posts %}
+            <div class="card mb-2">
+                <div class="card-header bg-white">
+
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <img class="rounded-circle" src={{post.author.profile.avatar.url}} width="25"> 
+                            <a href="#" class="text-decoration-none"> {{ post.author }} </a>
+                            <small> {{ post.created|timesince}} ago </small>
+                        </div>
+
+                        <div class="col-sm-4">
+                            {% if request.user == post.author %}
+                            <div class="d-flex justify-content-end">
+                                <form method="GET" action="{% url 'feed:update_post' %}">
+                                    <input type="hidden" name="success_url" value={{request.path}} />
+                                    <input type="hidden" name="pk" value={{post.pk}} />
+                                    <button class="bg-transparent border-0 text-secondary">
+                                        <h5 class="far fa-edit"></h5>
+                                    </button>
+                                </form>
+
+                                <form method="GET" action="{% url 'feed:delete_post' %}">
+                                    <input type="hidden" name="success_url" value={{request.path}} />
+                                    <input type="hidden" name="pk" value={{post.pk}} />
+                                    <button class="bg-transparent border-0 text-danger">
+                                        <h5 class="fas fa-trash"></h5>
+                                    </button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                        
+
+                </div>
+
+
+                <div class="card-body">
+
+                    {% if post.image %}
+                        <div> <img src={{post.image.url}} class="card-img"> </div>
+                    {% endif %}
+
+                    <p> {{ post.content }} </p>
+
+                    <div class="d-flex justify-content-between">
+
+                        <div id="likeCount" class="text-muted">
+                            {% if post.get_likes_count %}
+                                <small> Liked by {{ post.get_likes_count }} person{{post.get_likes_count|pluralize}} </small>
+                            {% else %}
+                                <small> No Likes</small>
+                            {% endif %}
+                        </div>
+
+                        <div id="commentsCount" class="">
+                            <i class="fas fa-comment"></i>
+                            <span> {{ post.get_comment_count }} comment{{post.get_comment_count|pluralize}} </span>
+                        </div>
+                    </div>
+                    
+
+                </div>
+
+
+                <div class="card-footer bg-white">
+
+                    <div id="socialIcons" class="mt-2 mb-3">
+                        <form method="POST" action="{% url 'feed:like' %}" id="like" class="d-inline">
+                            {% csrf_token %}
+                            <input type='hidden' name='post_id' value={{post.id}} />
+                            <input type='hidden' name='success_url' value="{{ request.path }}" />
+
+                            <button type = 'submit' class="btn btn-light"> 
+                                {% if request.user not in post.get_likes %}
+                                    <i class="far fa-thumbs-up"></i>
+                                {% else %}
+                                    <i class="fas fa-thumbs-up text-primary"></i>
+                                {% endif %}
+                                Like
+                            </button>
+                            
+                        </form>
+
+                        <button id ="share" class="ml-3 btn btn-light">
+                            <i class="fas fa-share"></i>
+                            Share
+                        </button>
+
+                    </div>
+
+
+                    <form method="POST"  action="{% url 'feed:add_comment' %}">
+                        {% csrf_token %}
+                        <input type='hidden' name='post_id' value={{post.id}} />
+                        <input type='hidden' name='success_url' value="{{ request.path }}" />
+                        <input type='hidden' name='template_name' value="{{ template_name }}" />
+                        <div class="d-flex">
+                            <div class="mr-2">
+                                <img class="rounded-circle mt-1" src={{user.profile.avatar.url}} width="25"> 
+                            </div>
+                            {{ comment_form }}
+                            <button type="submit" class="btn btn-primary ml-2 border-raduis"> Send </button>
+                        </div>
+                    </form>
+
+
+                    <div id="commentsContainer" class="mt-4">
+                        {% if post.get_comments %}
+                            {% for comment in post.get_comments %}
+                            <div class="d-flex mb-2">
+                                <div class="mr-2">
+                                    <img class="rounded-circle" src={{comment.author.profile.avatar.url}} width="25">
+                                </div>
+                                <div class="comment-box p-2">
+                                    <div> 
+                                        <a href="#" class="text-decoration-none"> {{ comment.author }} </a>
+                                        <small> {{ comment.created|timesince}} ago </small>
+                                    </div>
+                                    <div> {{ comment.content }} </div>
+                                </div>
+                            </div>
+
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                </div>
+                
+            </div>
+                
+            {% endfor %}
+
+        </div>
+
+        <div class="col-md-4">
+            <form method="POST"  action="{% url 'feed:add_post' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ post_form|crispy }}
+                <button type="submit" class="btn btn-success"> Add Post </button>
+            </form>
+        </div>
+    </div>
+
+    
+
+
+</div>
+
+
+{% endblock %}

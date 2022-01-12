@@ -1,0 +1,97 @@
+{% extends 'base.html '%}
+
+{% load crispy_forms_tags %}
+
+
+{% block title %} Profile Search | Bffbook {% endblock %}
+
+
+
+
+
+
+
+
+{% block content %}
+
+
+<div class="pt-5"></div>
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-8 m-auto">
+
+            {% if profile_list %}
+
+
+            {% for profile in profile_list %}
+
+            <div class="card mb-2">
+                <div class="card-body">
+                    <div class="row">
+
+                        <div class="col-sm-3">
+
+                            <img src="{{ profile.avatar.url }}" class="rounded-circle" width="150" />
+
+                        </div>
+
+                        <div class="col-sm-9">
+                            <h4> {{profile.user}} </h4>
+                            <p> {{profile.bio}} </p>
+
+                            <a href="{% url 'profiles:profile' profile.slug %}" role="button" class="btn btn-primary mb-1">
+                                See profile
+                            </a>
+
+                            {% if not profile.user == request.user %}
+                                {% if request.user not in profile.get_followers %}
+                                <form action="" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="pk" value={{profile.pk}}>
+                                    <button type="submit" class="btn border-success text-success px-3">
+                                        <i class="fas fa-user-plus"></i>
+                                        Follow
+                                    </button>
+                                </form>
+                                {% else %}
+                                <form action="" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="pk" value={{profile.pk}}>
+                                    <button type="submit" class="btn border-danger text-danger px-3">
+                                        <i class="fas fa-user-minus"></i>
+                                        Unfollow
+                                    </button>
+                                </form>
+                                {% endif %}
+                            {% endif %}
+
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+
+
+            {% endfor %}
+
+
+            {% else %}
+            <p class="lead mt-3"> No matching profiles. </p>
+
+            {% endif %}
+
+
+
+
+
+        </div>
+    </div>
+
+
+
+</div>
+
+{% endblock content %}

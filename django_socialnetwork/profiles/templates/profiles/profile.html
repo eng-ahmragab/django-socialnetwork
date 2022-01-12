@@ -1,0 +1,328 @@
+{% extends 'base.html '%}
+
+{% load crispy_forms_tags %}
+
+
+{% block title %} Profile | Bffbook {% endblock %}
+
+
+
+
+
+{% block content %}
+
+
+<div class="pt-3"></div>
+
+<div class="container">
+
+
+
+    <div class="row">
+        <div class="col-md-3">
+
+            <div class="mb-4">
+                <img src="{{ profile.avatar.url }}" width="250" />
+            </div>
+
+            <h4> {{profile.user}} </h4>
+
+            {% if profile.name %}
+            <p> 
+                <strong> Name: </strong>
+                {{profile.name}}
+            </p>
+            {% endif %}
+
+            {% if profile.country %}
+            <p >
+                <i class="fas fa-map-marker-alt"></i>
+                <strong> Location: </strong>
+                {{profile.country}}
+            </p>
+            {% endif %}
+
+            {% if profile.bio %}
+            <p>
+                <i class="far fa-file"></i>
+                <strong> Bio: </strong>
+                {{profile.bio}}
+            </p>
+            {% endif %}
+
+            <ul class="list-group list-group-small mb-2">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Posts
+                    <span class="badge badge-secondary badge-pill mr-1">
+                        {{ profile.get_posts_count }}
+                    </span>
+                </li>
+
+
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Followers
+                    <button class="border-0 bg-transparent" data-toggle="modal" data-target="#followersModal">
+                        <span class="badge badge-secondary badge-pill">
+                            {{profile.get_followers_count}}
+                        </span>
+                    </button>
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Following
+                    <button class="border-0 bg-transparent" data-toggle="modal" data-target="#followingModal">
+                        <span class="badge badge-secondary badge-pill">
+                        {{profile.get_following_count}}
+                    </span>
+                </button>
+                </li>
+
+
+            </ul>
+
+
+            {% if not profile.user == request.user %}
+            {% if request.user not in profile.get_followers %}
+            <form action="" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="pk" value={{profile.pk}}>
+                <button type="submit" class="btn border-success text-success px-3">
+                    <i class="fas fa-user-plus"></i>
+                    Follow
+                </button>
+            </form>
+            {% else %}
+            <form action="" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="pk" value={{profile.pk}}>
+                <button type="submit" class="btn border-danger text-danger px-3">
+                    <i class="fas fa-user-minus"></i>
+                    Unfollow
+                </button>
+            </form>
+            {% endif %}
+        {% endif %}
+
+
+
+            {% if profile.user == request.user %}
+            <!-- Button trigger modal -->
+            <button class="btn btn-primary py-2 px-3 mt-3" data-toggle="modal" data-target="#updateProfileModal">
+                Update Profile
+            </button>
+            {% endif %}
+
+
+
+        </div>
+
+
+
+
+        <div class="col-md-8">
+
+            {% for post in profile.get_posts %}
+            <div class="card mb-2">
+                <div class="card-header bg-white">
+
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <img class="rounded-circle" src={{post.author.profile.avatar.url}} width="25"> 
+                            <a href="#" class="text-decoration-none"> {{ post.author }} </a>
+                            <small> {{ post.created|timesince}} ago </small>
+                        </div>
+
+                        <div class="col-sm-4">
+                        </div>
+                    </div>
+                        
+
+                </div>
+
+
+                <div class="card-body">
+
+                    {% if post.image %}
+                        <div> <img src={{post.image.url}} class="card-img"> </div>
+                    {% endif %}
+
+                    <p> {{ post.content }} </p>
+
+                    <div class="d-flex justify-content-between">
+
+                        <div id="likeCount" class="text-muted">
+                            {% if post.get_likes_count %}
+                                <small> Liked by {{ post.get_likes_count }} person{{post.get_likes_count|pluralize}} </small>
+                            {% else %}
+                                <small> No Likes</small>
+                            {% endif %}
+                        </div>
+
+                        <div id="commentsCount" class="">
+                            <i class="fas fa-comment"></i>
+                            <span> {{ post.get_comment_count }} comment{{post.get_comment_count|pluralize}} </span>
+                        </div>
+                    </div>
+                    
+
+                </div>
+
+            </div>
+                
+            {% endfor %}
+
+        </div>
+
+
+
+
+
+    </div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="py-5 my-3"></div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Modals -->
+<!--=============================================================================-->
+
+<!-- modal reset is in the main.js -->
+
+<!-- update profile modal -->
+<div class="modal fade" id="updateProfileModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Update Profile
+                </h5>
+                <button class="close" data-dismiss="modal" onclick="modalReset('updateProfileModal')">
+                    <span> &times; </span>
+                </button>
+            </div>
+
+            <form method="POST" action="{% url 'profiles:update_profile' profile.pk %}" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {{ profile_form|crispy }}
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal" onclick="modalReset('updateProfileModal')">
+                        Close
+                    </button>
+                    <button class="btn btn-success" type="submit"> Update </button>
+                </div>
+            </form>
+
+        </div>
+
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+<!-- followersModal modal -->
+<div class="modal fade modal-center" id="followersModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal" onclick="modalReset('updateProfileModal')">
+                    <span> &times; </span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <ul>
+                    {% for follower in profile.get_followers %}
+                    <p>
+                        <a href="{% url 'profiles:profile' follower.profile.slug %}" class="text-decoration-none">
+                            {{ follower }}
+                        </a>
+                    </p>
+                    {% endfor %}
+                </ul>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+<!-- followingModal modal -->
+<div class="modal fade modal-center" id="followingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal" onclick="modalReset('updateProfileModal')">
+                    <span> &times; </span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <ul>
+                    {% for following in profile.get_following %}
+                    <p>
+                        <a href="{% url 'profiles:profile' following.slug %}" class="text-decoration-none">
+                            {{ follower }}
+                        </a>
+                    </p>
+                    {% endfor %}
+                </ul>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
