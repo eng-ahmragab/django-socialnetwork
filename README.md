@@ -17,7 +17,7 @@ a social network app built with django
 
 
 
-![App Screenshot](https://i.ibb.co/xgm5Zrd/screenshot.png)
+![App Screenshot](https://i.ibb.co/nMXSc7h/screen.png)
 
 
 
